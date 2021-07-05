@@ -1,6 +1,6 @@
 # travelrc – take your rc-files with you when using ssh or su
 
- ## What is the problem?
+## What is the problem?
 
 Over the years, I massively configure commandline tools that I regularly use, like bash, vim, screen an so on.
 I created aliases, a custom prompt, special keybindings and commands.
@@ -31,25 +31,25 @@ and add this string and commands to decompress and extract it as a command to ss
 My solution requires some steps which I'll outline here.
 It can be used as is, but it can also act as an inspiration for other solutions.
 
-* create a directory (the name of the directory is used once in the ```minify-trc``` function below) and symlink (or copy) the rc-files, that should travel with you, into it
+* create a directory (the name of the directory is used once in the `minify-trc` function below) and symlink (or copy) the rc-files, that should travel with you, into it
 
-```
+```bash
 mkdir $HOME/.travelrc
 ln -s -t $HOME/.travelrc $HOME/{.bashrc,.inputrc,.vimrc,.screenrc,.tmux.conf}
 ```
 
 * add a directory with executables that should be available in the travelled session
 
-```
+```bash
 mkdir $HOME/.travelrc/trcbin
 echo '#!/bin/bash
 bash --rcfile "$TBASHRC"' > $HOME/.travelrc/trcbin/trcbash
 chmod +x $HOME/.travelrc/trcbin/trcbash
 ```
 
-* add helper functions to your ```.bashrc```
+* add helper functions to your `.bashrc`
 
-```
+```bash
 minify-trc() {
     # this function copies the trc files to a tempdir and minifies them, it returns the tempdirname on stdout
     local trcdir="${TRAVELRCDIR:-$HOME/.travelrc}" # use the travelled rc dir if already travelled
@@ -91,11 +91,11 @@ true
 }
 ```
 
-* add functions to your ```.bashrc``` that enable travelling with the rc files via ssh, su, and docker
-    * I prepended a „t“ to each of these commands, so when I type ```ssh host``` and realize that my rc-files are missing, I can disconnect, prepend a „t“ tho the previous command (to get ```tssh host```) and everything is better :-)
+* add functions to your `.bashrc` that enable travelling with the rc files via ssh, su, and docker
+    * I prepended a „t“ to each of these commands, so when I type `ssh host` and realize that my rc-files are missing, I can disconnect, prepend a „t“ tho the previous command (to get `tssh host`) and everything is better :-)
     * this code has to be added after the helper functions mentioned above
 
-```
+```bash
 tssh() {
     # use -t to force the allocation of a terminal
     ssh -t "$@" "$(trccmd --xz)"
@@ -151,10 +151,10 @@ tsu() { # travel substitude user
 complete -A user tsu # complete usernames
 ```
 
-* add code to your ```.bashrc``` (the one that will travel) to detect whether this is a „travelled rc session“ and make some configurations, i.e. make screen and vim use the travelled rc-files, and add the „trcbin“ directory to PATH
-    * I have this at the beginning of my ```.bashrc```, but _after_ defaults for ```EDITOR``` and ```INPUTRC``` have been set
+* add code to your `.bashrc` (the one that will travel) to detect whether this is a „travelled rc session“ and make some configurations, i.e. make screen and vim use the travelled rc-files, and add the „trcbin“ directory to PATH
+    * I have this at the beginning of my `.bashrc`, but _after_ defaults for `EDITOR` and `INPUTRC` have been set
 
-```
+```bash
 if [ -n "$TRAVELRCDIR" ]; then # this is a travelled rc session
     [ -f "$TRAVELRCDIR/.bashrc" ] && export TBASHRC="$TRAVELRCDIR/.bashrc"
     [ -f "$TRAVELRCDIR/.inputrc" ] && export INPUTRC="$TRAVELRCDIR/.inputrc"
@@ -172,15 +172,15 @@ fi
 
 * Can it fix more problems?
     * yes, you can add more executables to PATH
-    * I had to execute scripts that unnecessarily used ```clear```, which meant that I was not able to scroll up anymore, so I added a script to the ```trcbin``` directory with the name ```clear```, but which did not do a real clear → problem solved (for me)
+    * I had to execute scripts that unnecessarily used `clear`, which meant that I was not able to scroll up anymore, so I added a script to the `trcbin` directory with the name `clear`, but which did not do a real clear → problem solved (for me)
 * Can it be used with zsh?
     * most likely yes, just replace bash with zsh, but zsh might not be installed on the destination-system and then you're screwed; perhaps bash works with most of the zsh configurations, I can't tell
 * Is it very efficient?
     * probably not :-(
-    * I've tried to make it efficient, but I think in some cases it starts much more shells then necessary (i.e. ```trcbash``` in the ```trcbin``` directory)
+    * I've tried to make it efficient, but I think in some cases it starts much more shells then necessary (i.e. `trcbash` in the `trcbin` directory)
     * it might slow down ssh connections a few seconds, but for me having my rc-files with me outweighs this downside
 * Does it work with tmux?
-    * not very well (see the ttmux alias above), but when tmux is started (or a new window is created), just type ```trcbash``` and you'll get a proper bash ;-)
+    * not very well (see the ttmux alias above), but when tmux is started (or a new window is created), just type `trcbash` and you'll get a proper bash ;-)
 * Is this project finished?
     * I've been using it for around a year now and am still improving if necessary
 
