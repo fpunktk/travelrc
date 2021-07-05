@@ -183,3 +183,8 @@ fi
     * not very well (see the ttmux alias above), but when tmux is started (or a new window is created), just type ```trcbash``` and you'll get a proper bash ;-)
 * Is this project finished?
     * I've been using it for around a year now and am still improving if necessary
+
+## License
+
+CC-BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/
+
