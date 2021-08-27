@@ -100,7 +100,12 @@ tssh() {
     # use -t to force the allocation of a terminal
     ssh -t "$@" "$(trccmd --xz)"
 }
-complete -F _ssh tssh # this is the same as for ssh; function _ssh might not exist when this is called, but will be created automagically when requesting completion for ssh
+_tssh_completion() {
+    # when completion is requested, it will be redefined to use _ssh and then load the completion function for ssh, see https://stackoverflow.com/questions/61539494/how-does-bash-do-ssh-autocompletion
+    complete -F _ssh tssh
+    __load_completion "ssh" && return 124 || complete -r tssh # if loading completion is successful then return, otherwise disable completion for tssh
+}
+complete -F _tssh_completion tssh # this just loads the correct completion function
 
 tdocker() {
     local dcmd="$1"
