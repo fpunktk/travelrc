@@ -62,7 +62,7 @@ minify-trc() {
     find "$trc_min_dir/" -type f -exec sed --in-place -e 's/^ *#[^!].*$//' -e 's/ \+# .*$//' '{}' '+' # minify all files as if they were shell scripts
     echo "$trc_min_dir"
 }
- 
+
 trccmd() {
     # echo all the commands to travel with rc files, arguments act as additional arguments to tar
     local trc_min_dir="$(minify-trc)"
@@ -101,7 +101,7 @@ tssh() {
     ssh -t "$@" "$(trccmd --xz)"
 }
 complete -F _ssh tssh # this is the same as for ssh; function _ssh might not exist when this is called, but will be created automagically when requesting completion for ssh
- 
+
 tdocker() {
     local dcmd="$1"
     shift
@@ -109,7 +109,7 @@ tdocker() {
     docker "$dcmd" --interactive --tty "$@" bash -c "$(trccmd --gzip)"
 }
 # TODO: add completion
- 
+
 tsu() { # travel substitude user
     local next_user="${1:-root}"
     local tsu_cmd="$(mktemp "/tmp/.tsu-cmd.XXXXXX")"
