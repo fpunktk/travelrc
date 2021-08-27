@@ -101,9 +101,14 @@ tssh() {
     ssh -t "$@" "$(trccmd --xz)"
 }
 _tssh_completion() {
-    # when completion is requested, it will be redefined to use _ssh and then load the completion function for ssh, see https://stackoverflow.com/questions/61539494/how-does-bash-do-ssh-autocompletion
-    complete -F _ssh tssh
-    __load_completion "ssh" && return 124 || complete -r tssh # if loading completion is successful then return, otherwise disable completion for tssh
+    # when completion is requested, load completion for ssh and use it for tssh, otherwise disable completion for tssh
+    # see https://stackoverflow.com/questions/61539494/how-does-bash-do-ssh-autocompletion
+    if __load_completion "ssh"; then
+        complete -F _ssh tssh
+        return 124
+    else
+        complete -r tssh
+    fi
 }
 complete -F _tssh_completion tssh # this just loads the correct completion function
 
