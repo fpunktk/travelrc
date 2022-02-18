@@ -74,7 +74,7 @@ trccmd() {
     [ ${#trcvar} -lt 65536 ] || { echo "ERROR: content of trcdir '$trcdir' is too big, even after minifying and compressing with '$*'" >&2; return 1; }
     # export $TRAVELRCDIR and create this directory, it could also be created in /tmp
     echo '
-export TRAVELRCDIR=$HOME/.travelrc.travelled
+export TRAVELRCDIR=${HOME:-/tmp}/.travelrc.travelled
 readonly TRAVELRCDIR
 mkdir --parents $TRAVELRCDIR'
     # SSH_TTY should still be set to figure out whether this is a ssh session
